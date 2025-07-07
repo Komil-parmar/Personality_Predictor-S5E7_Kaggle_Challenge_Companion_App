@@ -1,0 +1,30 @@
+{
+  "class_specific": {
+    "Introvert": {
+      "average_nn_distance": 1.6324761402856003,
+      "weighted_baseline_distance": 1.9999599467568177,
+      "correctly_classified_count": 231,
+      "misclassified_count": 52,
+      "misclassification_rate": 0.18374558303886926
+    },
+    "Extrovert": {
+      "average_nn_distance": 1.3197347416456862,
+      "weighted_baseline_distance": 1.3346259658109407,
+      "correctly_classified_count": 709,
+      "misclassified_count": 8,
+      "misclassification_rate": 0.011157601115760111
+    }
+  },
+  "overall": {
+    "weighted_baseline_distance": 1.4981282526178532,
+    "simple_average_baseline": 1.4761054409656431,
+    "total_samples_analyzed": 1000,
+    "total_correctly_classified": 940
+  },
+  "methodology": {
+    "description": "Weighted average nearest neighbor distance for correctly classified samples",
+    "formula": "weighted_distance = avg_nn_distance * (1 + misclassification_ratio)",
+    "sample_size": 1000,
+    "random_seed": 42
+  }
+}

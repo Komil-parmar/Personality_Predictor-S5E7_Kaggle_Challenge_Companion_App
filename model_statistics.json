@@ -1,0 +1,47 @@
+{
+  "overall": {
+    "total_samples": 18524,
+    "correctly_classified": 17933,
+    "misclassified": 591,
+    "accuracy": 0.9680954437486504,
+    "misclassification_rate": 0.03190455625134958
+  },
+  "by_class": {
+    "Extrovert": {
+      "total_samples": 13699,
+      "correctly_classified": 13449,
+      "misclassified": 250,
+      "accuracy": 0.9817504927366961,
+      "misclassification_rate": 0.01824950726330389
+    },
+    "Introvert": {
+      "total_samples": 4825,
+      "correctly_classified": 4484,
+      "misclassified": 341,
+      "accuracy": 0.9293264248704663,
+      "misclassification_rate": 0.07067357512953368
+    }
+  },
+  "distance_metrics": {
+    "average_correct_distance": 9.341170832386334,
+    "median_correct_distance": 8.887025821173598,
+    "std_correct_distance": 3.9308426147860165
+  },
+  "metadata": {
+    "num_classes": 2,
+    "class_labels": [
+      "Extrovert",
+      "Introvert"
+    ],
+    "feature_columns": [
+      "Time_spent_Alone",
+      "Stage_fear",
+      "Social_event_attendance",
+      "Going_outside",
+      "Drained_after_socializing",
+      "Friends_circle_size",
+      "Post_frequency"
+    ],
+    "total_misclassified_samples_saved": 591
+  }
+}
