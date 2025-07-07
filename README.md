@@ -1,0 +1,2 @@
+# Personality_Predictor-S5E7_Kaggle_Challenge_Companion_App
+This Streamlit web app is built based on the Kaggle S5E7 tabular competition, where the goal is to classify individuals as Introvert or Extrovert using just 7 input features. It uses an XGBoost model trained on the official dataset and serves as an interactive tool to engage with the problem, visualize model behavior, and explore its failure modes.
