@@ -10,6 +10,9 @@ from sklearn.decomposition import PCA
 import warnings
 warnings.filterwarnings('ignore')
 
+# Import Supabase configuration
+from supabase_config import get_supabase_manager
+
 # Page configuration
 st.set_page_config(
     page_title=" Personality Predictor",
@@ -919,8 +922,9 @@ def main():
         st.markdown("---")
         # Show closest person in the community map (if any members exist)
         try:
-            # Load existing PCA submissions to find closest person
-            existing_pca_data = pd.read_json('personality_pca_submissions.json', lines=True)
+            # Load existing PCA submissions from Supabase
+            db_manager = get_supabase_manager()
+            existing_pca_data = db_manager.get_pca_submissions()
             
             if len(existing_pca_data) > 0:
                 # Clean the data - remove any invalid entries
@@ -1151,26 +1155,22 @@ def main():
                             "feature_vector": input_data.iloc[0].tolist()  # For PCA calculation
                         }
                         
-                        # Save PCA submission data
+                        # Save PCA submission data to Supabase
                         try:
-                            # Try to load existing PCA submissions
-                            try:
-                                existing_pca_data = pd.read_json('personality_pca_submissions.json', lines=True)
-                                pca_df = pd.concat([existing_pca_data, pd.DataFrame([pca_submission_data])], ignore_index=True)
-                            except FileNotFoundError:
-                                pca_df = pd.DataFrame([pca_submission_data])
+                            db_manager = get_supabase_manager()
+                            success = db_manager.save_pca_submission(pca_submission_data)
                             
-                            # Save to JSON file
-                            pca_df.to_json('personality_pca_submissions.json', orient='records', lines=True)
-                            
-                            st.success("🎉 Thank you! You've been added to our personality map.")
-                            st.info("💡 Your data point will appear on the interactive map below (refresh the page to see updates).")
-                            
-                            if linkedin_profile:
-                                st.balloons()
-                                st.markdown(f"🌟 **Welcome to the community, {display_name}!** Your LinkedIn profile will be accessible to others for networking.")
+                            if success:
+                                st.success("🎉 Thank you! You've been added to our personality map.")
+                                st.info("💡 Your data point will appear on the interactive map below (refresh the page to see updates).")
+                                
+                                if linkedin_profile:
+                                    st.balloons()
+                                    st.markdown(f"🌟 **Welcome to the community, {display_name}!** Your LinkedIn profile will be accessible to others for networking.")
+                                else:
+                                    st.markdown(f"🌟 **Welcome to the community, {display_name}!**")
                             else:
-                                st.markdown(f"🌟 **Welcome to the community, {display_name}!**")
+                                st.error("⚠️ There was an error saving your data to the personality map. Please try again later.")
                                 
                         except Exception as e:
                             st.error("⚠️ There was an error saving your data to the personality map. Please try again later.")
@@ -1223,8 +1223,9 @@ def main():
         )
         
         try:
-            # Load existing PCA submissions
-            pca_submissions = pd.read_json('personality_pca_submissions.json', lines=True)
+            # Load existing PCA submissions from Supabase
+            db_manager = get_supabase_manager()
+            pca_submissions = db_manager.get_pca_submissions()
             
             # For existing entries without confidence data, assume 100% agreement
             if 'confidence_difference' not in pca_submissions.columns:
@@ -1603,24 +1604,20 @@ def main():
                             "distance_to_problematic": float(min_distance) if 'min_distance' in locals() and min_distance is not None else None
                         }
                         
-                        # Save feedback (in real implementation, this would go to a database)
+                        # Save feedback to Supabase
                         try:
-                            # Try to load existing feedback file
-                            try:
-                                existing_feedback = pd.read_json('user_feedback.json', lines=True)
-                                feedback_df = pd.concat([existing_feedback, pd.DataFrame([feedback_data])], ignore_index=True)
-                            except FileNotFoundError:
-                                feedback_df = pd.DataFrame([feedback_data])
+                            db_manager = get_supabase_manager()
+                            success = db_manager.save_user_feedback(feedback_data)
                             
-                            # Save to JSON file
-                            feedback_df.to_json('user_feedback.json', orient='records', lines=True)
-                            
-                            st.success("✅ Thank you! Your feedback has been submitted successfully.")
-                            st.info("💡 Your input will help us identify patterns in misclassifications and improve the model.")
-                            
-                            if user_name:
-                                st.balloons()
-                                st.markdown(f"🙏 **Special thanks to {user_name}** for contributing to model improvement!")
+                            if success:
+                                st.success("✅ Thank you! Your feedback has been submitted successfully.")
+                                st.info("💡 Your input will help us identify patterns in misclassifications and improve the model.")
+                                
+                                if user_name:
+                                    st.balloons()
+                                    st.markdown(f"🙏 **Special thanks to {user_name}** for contributing to model improvement!")
+                            else:
+                                st.error("⚠️ There was an error saving your feedback. Please try again later.")
                                 
                         except Exception as e:
                             st.error("⚠️ There was an error saving your feedback. Please try again later.")
